@@ -1,0 +1,126 @@
+/* للأجهزة اللوحية والموبايلات */
+@media (max-width: 600px) {
+    .app-container {
+        margin: 0;
+        border-radius: 30px;
+    }
+
+    .app-header {
+        padding: 12px 15px;
+    }
+
+    .profile {
+        padding: 4px 12px 4px 8px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .info h3 {
+        font-size: 1rem;
+    }
+
+    .info p {
+        font-size: 0.7rem;
+    }
+
+    .tab {
+        padding: 8px 3px;
+        font-size: 0.8rem;
+    }
+
+    .sun {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+
+    .orbit {
+        width: 200px;
+        height: 200px;
+    }
+
+    .earth {
+        width: 55px;
+        height: 55px;
+        font-size: 1.5rem;
+    }
+
+    .owl-message span:first-child {
+        font-size: 1.5rem;
+    }
+
+    .owl-message span:last-child {
+        font-size: 0.85rem;
+    }
+
+    .milestone-card {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+
+    .quiz-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .flower-card {
+        width: 90px;
+        font-size: 0.8rem;
+    }
+
+    .btn-primary {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .feedback {
+        font-size: 0.85rem;
+    }
+}
+
+/* للأجهزة الصغيرة جداً (أقل من 380px) */
+@media (max-width: 380px) {
+    .tab {
+        font-size: 0.7rem;
+    }
+
+    .orbit {
+        width: 170px;
+        height: 170px;
+    }
+
+    .earth {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .sun {
+        width: 65px;
+        height: 65px;
+        font-size: 1.5rem;
+    }
+
+    .quiz-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+/* تحسينات للمس */
+@media (hover: none) and (pointer: coarse) {
+    .tab, .btn-primary, .quiz-btn, .btn-sm {
+        cursor: default;
+    }
+
+    .earth {
+        cursor: grab;
+    }
+
+    .earth:active {
+        cursor: grabbing;
+    }
+}

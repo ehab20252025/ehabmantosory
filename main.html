@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>مشوار الأرض | الرئيسية</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- الهيدر -->
+        <div class="app-header">
+            <div class="profile" id="profileBtn">
+                <div class="avatar" id="avatarBox">
+                    <img id="avatarImg" src="assets/images/default-avatar.png" alt="صورة الطفل">
+                </div>
+                <div class="info">
+                    <h3 id="childNameSpan">أوليفيا</h3>
+                    <p id="childAgeSpan">✨ 4 سنوات</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button id="settingsBtn" class="btn-sm">⚙️</button>
+                <button id="familyBtn" class="btn-sm">👨‍👩‍👧</button>
+            </div>
+        </div>
+
+        <!-- التبويبات -->
+        <div class="tabs">
+            <div class="tab active" data-tab="walk">🌍 مشوار الأرض</div>
+            <div class="tab" data-tab="quiz">📅 تحدي التواريخ</div>
+            <div class="tab" data-tab="garden">🌻 حديقة الامتنان</div>
+        </div>
+
+        <!-- محتوى مشوار الأرض -->
+        <div id="panelWalk" class="panel active-panel">
+            <div class="sun-area">
+                <div class="sun">🌞</div>
+                <div class="orbit-zone">
+                    <div class="orbit" id="orbitDiv"></div>
+                    <div id="earthBtn" class="earth" draggable="true">🌍</div>
+                </div>
+                <div class="owl-message">
+                    <span>🦉</span>
+                    <span id="owlWalkMsg">اسحب الكرة الأرضية حول الشمس دورة كاملة لكل سنة من عمرك</span>
+                </div>
+                <div class="milestones" id="milestonesList"></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="walkProgress" style="width: 0%;"></div>
+                </div>
+                <div class="feedback" id="walkFeedback"></div>
+                <button id="resetWalk" class="btn-primary">🔄 إعادة المشوار</button>
+            </div>
+        </div>
+
+        <!-- محتوى تحدي التواريخ -->
+        <div id="panelQuiz" class="panel">
+            <div class="owl-message">
+                <span>🦉📅</span>
+                <span id="quizQuestion">كم شهراً في السنة؟</span>
+            </div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="stars-row" id="quizStars"></div>
+            <div class="feedback" id="quizFeedback"></div>
+            <button id="nextQuizBtn" class="btn-primary">🎲 سؤال جديد</button>
+        </div>
+
+        <!-- محتوى حديقة الامتنان -->
+        <div id="panelGarden" class="panel">
+            <div class="owl-message">
+                <span>🌼🦉</span>
+                <span>ما الشيء الجميل الذي حدث لك هذا العام؟</span>
+            </div>
+            <div class="garden-grid" id="gardenGrid"></div>
+            <button id="addGratitudeBtn" class="btn-primary">➕ أضف زهرة شكر</button>
+            <button id="certificateBtn" class="btn-primary" style="background:#8b6b42;">🏆 شهادتي التقديرية</button>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/tts.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/earth-walk.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/garden.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
