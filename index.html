@@ -1,73 +1,193 @@
-// sw.js - Service Worker لتشغيل التطبيق بدون إنترنت
-const CACHE_NAME = 'montessori-earth-walk-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/main.html',
-  '/quiz.html',
-  '/garden.html',
-  '/profile.html',
-  '/certificate.html',
-  '/css/style.css',
-  '/css/mobile-responsive.css',
-  '/js/main.js',
-  '/js/earth-walk.js',
-  '/js/quiz.js',
-  '/js/garden.js',
-  '/js/storage.js',
-  '/js/tts.js',
-  '/js/utils.js',
-  '/js/certificate.js',
-  '/data/questions.json',
-  '/assets/images/default-avatar.png',
-  '/assets/images/sun.png',
-  '/assets/images/earth.png',
-  '/assets/images/owl.png',
-  '/assets/images/flower.png'
-];
-
-// تثبيت Service Worker وتخزين الملفات
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(err => console.error('Cache addAll error:', err))
-  );
-});
-
-// اعتراض الطلبات وتقديم النسخة المخزنة مؤقتاً
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // إذا وجد الملف في الكاش، أرجع منه
-        if (response) {
-          return response;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🎂 مشوار الأرض | مونتيسوري</title>
+    
+    <!-- PWA Files -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e67e22">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مشوار الأرض">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+    
+    <style>
+        /* شاشة الترحيب المؤقتة */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #fef7e0, #fae2b0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
-        // وإلا، اجلبه من الشبكة
-        return fetch(event.request).catch(() => {
-          // إذا لم يوجد ولا شبكة، أرجع صفحة الخطأ الافتراضية
-          return caches.match('/index.html');
-        });
-      })
-  );
-});
+        .splash-screen .sun-earth {
+            font-size: 4rem;
+            animation: spinScale 1.5s ease-in-out infinite;
+        }
+        @keyframes spinScale {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .splash-screen h1 {
+            color: #b6511a;
+            font-size: 1.8rem;
+            margin-top: 20px;
+        }
+        .splash-screen .loading {
+            margin-top: 30px;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f5cf8a;
+            border-top: 4px solid #e67e22;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة الترحيب -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="sun-earth">🌞🌍</div>
+        <h1>مشوار الأرض</h1>
+        <p>طريقة مونتيسوري للاحتفال بعيد الميلاد</p>
+        <div class="loading"></div>
+    </div>
 
-// تحديث الـ Service Worker
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            console.log('Deleting old cache:', cache);
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
-  );
-});
+    <!-- التطبيق الرئيسي -->
+    <div id="appRoot" style="display: none;">
+        <div class="app-container">
+            <!-- الهيدر -->
+            <div class="app-header">
+                <div class="profile" id="profileBtn">
+                    <div class="avatar" id="avatarBox">
+                        <img id="avatarImg" src="assets/mages/3135715.png" alt="صورة الطفل">
+                    </div>
+                    <div class="info">
+                        <h3 id="childNameSpan">أوليفيا</h3>
+                        <p id="childAgeSpan">✨ 4 سنوات</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button id="settingsBtn" class="btn-sm" title="الإعدادات">⚙️</button>
+                    <button id="familyBtn" class="btn-sm" title="أطفال العائلة">👨‍👩‍👧</button>
+                </div>
+            </div>
+
+            <!-- التبويبات -->
+            <div class="tabs">
+                <div class="tab active" data-tab="walk">🌍 مشوار الأرض</div>
+                <div class="tab" data-tab="quiz">📅 تحدي التواريخ</div>
+                <div class="tab" data-tab="garden">🌻 حديقة الامتنان</div>
+            </div>
+
+            <!-- لعبة مشوار الأرض -->
+            <div id="panelWalk" class="panel active-panel">
+                <div class="sun-area">
+                    <div class="sun">🌞</div>
+                    <div class="orbit-zone">
+                        <div class="orbit" id="orbitDiv"></div>
+                        <div id="earthBtn" class="earth" draggable="true">🌍</div>
+                    </div>
+                    <div class="owl-message">
+                        <span>🦉</span>
+                        <span id="owlWalkMsg">اسحب الكرة الأرضية حول الشمس دورة كاملة لكل سنة من عمرك</span>
+                    </div>
+                    <div class="milestones" id="milestonesList"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="walkProgress" style="width: 0%;"></div>
+                    </div>
+                    <div class="feedback" id="walkFeedback"></div>
+                    <button id="resetWalk" class="btn-primary">🔄 إعادة المشوار</button>
+                </div>
+            </div>
+
+            <!-- لعبة تحدي التواريخ -->
+            <div id="panelQuiz" class="panel">
+                <div class="owl-message">
+                    <span>🦉📅</span>
+                    <span id="quizQuestion">كم شهراً في السنة؟</span>
+                </div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="stars-row" id="quizStars"></div>
+                <div class="feedback" id="quizFeedback"></div>
+                <button id="nextQuizBtn" class="btn-primary">🎲 سؤال جديد</button>
+            </div>
+
+            <!-- حديقة الامتنان -->
+            <div id="panelGarden" class="panel">
+                <div class="owl-message">
+                    <span>🌼🦉</span>
+                    <span>ما الشيء الجميل الذي حدث لك هذا العام؟</span>
+                </div>
+                <div class="garden-grid" id="gardenGrid"></div>
+                <button id="addGratitudeBtn" class="btn-primary">➕ أضف زهرة شكر</button>
+                <button id="certificateBtn" class="btn-primary" style="background:#8b6b42;">🏆 شهادتي التقديرية</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إخفاء شاشة الترحيب
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            const appRoot = document.getElementById('appRoot');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    if (appRoot) appRoot.style.display = 'block';
+                }, 500);
+            }
+        }, 2000);
+
+        // تسجيل Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registered:', reg))
+                .catch(err => console.error('SW error:', err));
+        }
+
+        // تهيئة التطبيق
+        window.initApp = function() {
+            if (typeof initTTS === 'function') initTTS();
+            if (typeof loadChildData === 'function') loadChildData();
+            if (typeof initTabs === 'function') initTabs();
+            if (typeof initEarthWalk === 'function') initEarthWalk();
+            if (typeof initQuiz === 'function') initQuiz();
+            if (typeof initGarden === 'function') initGarden();
+        };
+        
+        // الانتظار قليلاً قبل التهيئة
+        setTimeout(() => {
+            if (typeof initApp === 'function') initApp();
+        }, 500);
+    </script>
+
+    <!-- JavaScript Files -->
+    <script src="js/storage.js"></script>
+    <script src="js/tts.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/earth-walk.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/garden.js"></script>
+    <script src="js/certificate.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
